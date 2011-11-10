@@ -7,7 +7,7 @@ import ru.semikov.sea.ai.AI;
 import ru.semikov.sea.logic.*;
 
 /**
- * Представление главного окна
+ * Main window representation
  */
 public class GameModel {
 	private ArrayList<ISubscriber> listeners = new ArrayList<ISubscriber>();
@@ -21,10 +21,10 @@ public class GameModel {
 		playerFieldPlayer = new Field(dx, dy, numShip);
 		playerFieldOpponent = new Field(dx, dy, numShip);
 		ai = new AI(playerFieldPlayer);
-		setDimention(dx, dy, numShip);
+		setDimension(dx, dy, numShip);
 	}
 
-	public void setDimention(int dx, int dy, int numShip) {
+	public void setDimension(int dx, int dy, int numShip) {
 		playerFieldOpponent.setWidth(dx);
 		playerFieldOpponent.setHeight(dy);
 		playerFieldOpponent.setMaxShip(numShip);

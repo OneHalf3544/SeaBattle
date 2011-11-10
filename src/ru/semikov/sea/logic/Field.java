@@ -6,7 +6,6 @@ public class Field {
 	public final static int SHUT_MISSED = 1; 
 	public final static int SHUT_INJURED = 2; 
 	public final static int SHUT_KILLED = 3; 
-	public final static int SHUT_WON = 4;
 
 	private Cell[][] cells;
 	private ArrayList<Ship> ships;
@@ -16,11 +15,11 @@ public class Field {
 	private int numLiveShips;
 
 	public Field(int x, int y, int ship) {
-		setDimention(x, y, ship);
+		setDimension(x, y, ship);
 		setShip();
 	}
 
-	public void setDimention(int x, int y, int ship) {
+	public void setDimension(int x, int y, int ship) {
 		setWidth(x);
 		setHeight(y);
 		setMaxShip(ship);
@@ -28,15 +27,14 @@ public class Field {
 
 	public void setShip() {
 		setNumLiveShips(0);
-		// заполняем поле элементами воды
+		// Fill the fields by water elements
 		cells = new Cell[getWidth()][getHeight()]; 
 		for(int j = 0; j < getHeight(); j++) {
 			for(int i = 0; i < getWidth(); i++) {
-				//TODO возможно не правильно каждый раз создавать
 				cells[i][j] = new Cell(i, j);
 			}
 		}
-		// заполняем поле короблями
+		// Fill the field by the ships
 		ships = new ArrayList<Ship>(); 
 		for(int i = getMaxShip(); i > 0; i--) {
 			for(int j = (getMaxShip() - i +1 ); j > 0; j--) {
@@ -44,12 +42,12 @@ public class Field {
 				ships.add(ship);
 			}
 		}
-		// удаляем окружение коробля
+		// Remove the ship surrounded border
 		for(int j = 0; j < getHeight(); j++) {
 			for(int i = 0; i < getWidth(); i++) {
 				Cell cell = cells[i][j];
-				if (cell.getState() == Cell.CELL_BORDER) {
-					cell.setState(Cell.CELL_WATER);
+				if (cell.getState() == Cell.State.BORDER) {
+					cell.setState(Cell.State.WATER);
 				}
 			}
 		}

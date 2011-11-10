@@ -11,7 +11,7 @@ public class PlaceShipSet extends PlaceShip {
 
 	@Override
 	public boolean setShip(int x, int y) {
-		getField().getCell(x, y).setState(Cell.CELL_WELL);
+		getField().getCell(x, y).setState(Cell.State.WELL);
 		ship.getListCells().add(getField().getCell(x, y));
 		getField().getCell(x, y).setShip(ship);
 		return true;
@@ -20,7 +20,7 @@ public class PlaceShipSet extends PlaceShip {
 	@Override
 	public boolean setBorder(int x, int y) {
 		if ( getField().isBound(x, y) ) { 
-			getField().getCell(x, y).setState(Cell.CELL_BORDER);
+			getField().getCell(x, y).setState(Cell.State.BORDER);
 			ship.getListBorders().add(getField().getCell(x, y));
 		}
 		return true;

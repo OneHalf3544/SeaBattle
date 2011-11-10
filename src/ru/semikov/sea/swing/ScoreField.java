@@ -25,7 +25,7 @@ public class ScoreField extends JPanel implements ISubscriber {
 		}
 		
 		for(Ship ship : model.playerFieldOpponent.getShips()) {
-			if (ship.getState() != Ship.SHIP_KILLED) {
+			if (ship.getState() != Ship.State.KILLED) {
 				m[ship.getSize() - 1] ++;
 			}
 		}

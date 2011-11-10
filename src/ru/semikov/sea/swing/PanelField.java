@@ -25,12 +25,12 @@ abstract public class PanelField extends JPanel implements ISubscriber {
 		return getHeight() / getField().getHeight();
 	}
 	
-	abstract protected Color getColorByStateElement(int state);
+	abstract protected Color getColorByStateElement(Cell.State state);
 	
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		// рисуем решётку
+		// Draw a grid
 		for(int i = 0; i < getField().getWidth() + 1; i++) {
 			g.drawLine(i * getCellWidth(), 0, i * getCellWidth(), getCellHeight() * getField().getHeight());
 		}
@@ -40,12 +40,12 @@ abstract public class PanelField extends JPanel implements ISubscriber {
 		}
 
 		
-		// рисуем элементы
+		// Draw the elements
 		for(int j = 0; j < getField().getHeight(); j++) {
 			for(int i = 0; i < getField().getWidth(); i++) {
-				int state = field.getCell(i, j).getState();
+				Cell.State state = field.getCell(i, j).getState();
 				g.setColor(getColorByStateElement(state));
-				if (state == Cell.CELL_MISSED) {
+				if (state == Cell.State.MISSED) {
 					g.fillRect(i*getCellWidth() + (getCellWidth() / 2) - 1, j*getCellHeight() + (getCellHeight() / 2) - 1, 4, 4);
 				} else {
 					g.fillRect(i*getCellWidth()+1, j*getCellHeight()+1, getCellWidth() - 1, getCellHeight() - 1);

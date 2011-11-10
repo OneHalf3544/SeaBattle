@@ -17,7 +17,7 @@ public class AIDirection extends AIBase {
 		do {
 			m+= i;
 			n+= j;
-		} while ( ai.getField().isBound(m, n) && (ai.getField().getCell(m, n).getState() == Cell.CELL_INJURED) );
+		} while ( ai.getField().isBound(m, n) && (ai.getField().getCell(m, n).getState() == Cell.State.INJURED) );
 		
 		if (ai.getField().isBound(m, n) ) {
 			Cell e = ai.getField().getCell(m, n);

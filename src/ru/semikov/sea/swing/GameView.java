@@ -18,12 +18,8 @@ public class GameView extends JFrame {
 	private JMenuItem mntmNewGame;
 	private JMenuItem mntmExit;
 	private JMenuItem mntmAbout;
-	private JMenuItem mntm5;
-	private JMenuItem mntm10;
-	private JMenuItem mntm15;
-	private JMenuItem mntm20;
 
-	public PanelFieldPlayer panelPlayerPlayer;
+    public PanelFieldPlayer panelPlayerPlayer;
 	public PanelFieldOpponent panelPlayerOpponent;
 	private ScoreField panelScore;
 	
@@ -38,7 +34,7 @@ public class GameView extends JFrame {
 	}
 
 	/**
-	 * обновляем данные на форме
+	 * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	 */
 	public void update() {
 		panelPlayerPlayer.repaint();
@@ -48,16 +44,12 @@ public class GameView extends JFrame {
 	}
 
 	/**
-	 * добавление слушателей формы и направляем их на контроллер 
+	 * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 
 	 */
 	public void attachController() {
 		mntmAbout.addActionListener(controller);
 		mntmNewGame.addActionListener(controller);
 		mntmExit.addActionListener(controller);
-		mntm5.addActionListener(controller);
-		mntm10.addActionListener(controller);
-		mntm15.addActionListener(controller);
-		mntm20.addActionListener(controller);
 		panelPlayerOpponent.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent arg0) {
@@ -67,7 +59,7 @@ public class GameView extends JFrame {
 	}
 
 	/**
-	 * построение интерфейса пользователя
+	 * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	 */
 	private void buildUI() {
 		this.setTitle("SeaBattle");
@@ -109,18 +101,11 @@ public class GameView extends JFrame {
 
 		JMenu mnProperties = new JMenu("Properties");
 		menuBar.add(mnProperties);
-		
-		mntm5 = new JMenuItem("5 x 5");
-		mnProperties.add(mntm5);
-		
-		mntm10 = new JMenuItem("10 x 10");
-		mnProperties.add(mntm10);
-		
-		mntm15 = new JMenuItem("15 x 15");
-		mnProperties.add(mntm15);
-		
-		mntm20 = new JMenuItem("20 x 20");
-		mnProperties.add(mntm20);
+
+        mnProperties.add(new JMenuItem(new SetDimensionAction(5, 5, 2, model)));
+        mnProperties.add(new JMenuItem(new SetDimensionAction(10, 10, 4, model)));
+        mnProperties.add(new JMenuItem(new SetDimensionAction(15, 15, 6, model)));
+        mnProperties.add(new JMenuItem(new SetDimensionAction(20, 20, 7, model)));
 		
 		JMenu mnHelp = new JMenu("Help");
 		menuBar.add(mnHelp);

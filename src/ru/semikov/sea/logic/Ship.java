@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Ship {
-	public final static int SHIP_WELL = 1;
-	public final static int SHIP_INJURED = 2;
-	public final static int SHIP_KILLED = 3;
+
+    public enum State {
+        WELL,
+        INJURED,
+        KILLED;
+    }
 
 	public int x;
 	public int y;
@@ -14,7 +17,7 @@ public class Ship {
 	public int dy;
 	private int size;
 	private int health;
-	private int state;
+	private State state;
 	private Field field;
 	private ArrayList<Cell> listCells;
 	private ArrayList<Cell> listBorders;
@@ -31,7 +34,7 @@ public class Ship {
 		this.size = size;
 		this.health = size;
 		this.field = field;
-		this.state = Ship.SHIP_WELL;
+		this.state = State.WELL;
 		
 		do {
 			this.getPlace();
@@ -58,7 +61,7 @@ public class Ship {
 	}
 	
 	/**
-	 * Функция обхода корабля и его окружения
+	 * пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	 * 
 	 * @return
 	 */
@@ -66,14 +69,14 @@ public class Ship {
 		int i, m, n;
 		
 		for(i = 0; i < size; i++) {
-			// корабль
+			// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			m = y + i * dy;
 			n = x + i * dx;
 			if (! tp.setShip(m, n) ) {
 				return false;
 			}
 			
-			// площадка сверху и снизу корабля
+			// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			m = y + i * dy - dx;
 			n = x + i * dx - dy;
 			if (! tp.setBorder(m, n) ) {
@@ -85,7 +88,7 @@ public class Ship {
 				return false;
 			}
 		}
-		// площадка слева и справа корабля
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		for(i = -1; i < 2; i++) {
 			m = y + i * dx - dy;
 			n = x + i * dy - dx;
@@ -110,31 +113,33 @@ public class Ship {
 	}
 
 	public int doShot() {
-		if (health != 0) {
-			health--;
-			if (health == 0) {
-				getField().setNumLiveShips(getField().getNumLiveShips() - 1);
-				state = Ship.SHIP_KILLED;
-				for(Cell e : listCells) {
-					e.setState(Cell.CELL_KILLED);
-				}
-				for(Cell e : listBorders) {
-					e.setState(Cell.CELL_MISSED);
-					e.setMark(true);
-				}
-				return Field.SHUT_KILLED;
-			} else {
-				state = SHIP_INJURED;
-			}
-		}
-		return Field.SHUT_INJURED;
-	}
+        if (health == 0) {
+            return Field.SHUT_INJURED;
+        }
+
+        health--;
+        if (health != 0) {
+            state = State.INJURED;
+            return Field.SHUT_INJURED;
+        }
+
+        getField().setNumLiveShips(getField().getNumLiveShips() - 1);
+        state = State.KILLED;
+        for(Cell e : listCells) {
+            e.setState(Cell.State.KILLED);
+        }
+        for(Cell e : listBorders) {
+            e.setState(Cell.State.MISSED);
+            e.setMark(true);
+        }
+        return Field.SHUT_KILLED;
+    }
 	
 	public int getSize() {
 		return size;
 	}
 
-	public int getState() {
+	public State getState() {
 		return state;
 	}
 

@@ -1,13 +1,34 @@
 package ru.semikov.sea.logic;
 
+import java.awt.*;
+
 public class Cell {
-	public final static int CELL_WATER = 1;
-	public final static int CELL_BORDER = 2;
-	public final static int CELL_WELL = 3;
-	public final static int CELL_INJURED = 4;
-	public final static int CELL_KILLED = 5;
-	public final static int CELL_MISSED = 6;
-	
+
+    public enum State {
+        WATER(new Color(225, 225, 255), new Color(225, 225, 255)),
+        BORDER(new Color(215, 215, 255), new Color(225, 225, 255)),
+        WELL(Color.green, new Color(225, 225, 255)),
+        INJURED(Color.red, Color.red),
+        KILLED(Color.gray, Color.gray),
+        MISSED(Color.black, Color.black);
+
+        private final Color playerColor;
+        private final Color opponentColor;
+
+        private State(Color playerColor, Color opponentColor) {
+            this.playerColor = playerColor;
+            this.opponentColor = opponentColor;
+        }
+
+        public Color getPlayerColor() {
+            return playerColor;
+        }
+
+        public Color getOpponentColor() {
+            return opponentColor;
+        }
+    }
+
 	/**
 	 * @uml.property  name="x"
 	 */
@@ -19,7 +40,7 @@ public class Cell {
 	/**
 	 * @uml.property  name="state"
 	 */
-	private int state;
+	private State state;
 	/**
 	 * @uml.property  name="ship"
 	 * @uml.associationEnd  inverse="listCells:ru.semikov.sea.logic.Ship"
@@ -33,7 +54,7 @@ public class Cell {
 	public Cell(int x, int y) {
 		this.x = x;
 		this.y = y;
-		this.state = CELL_WATER;
+		this.state = State.WATER;
 		this.mark = false;
 	}
 	
@@ -41,7 +62,7 @@ public class Cell {
 	 * @param state
 	 * @uml.property  name="state"
 	 */
-	public void setState(int state) {
+	public void setState(State state) {
 		this.state = state;
 	}
 	
@@ -49,7 +70,7 @@ public class Cell {
 	 * @return
 	 * @uml.property  name="state"
 	 */
-	public int getState() {
+	public State getState() {
 		return state;
 	}
 
@@ -87,12 +108,12 @@ public class Cell {
 
 	public int doShot() {
 		setMark(true);
-		if (state == CELL_WELL) {
-			setState(CELL_INJURED);
+		if (state == State.WELL) {
+			setState(State.INJURED);
 			return getShip().doShot();
 		} else {
-			if ( (state == CELL_BORDER) || (state == CELL_WATER)) {
-				setState(CELL_MISSED);
+			if ( (state == State.BORDER) || (state == State.WATER)) {
+				setState(State.MISSED);
 			}
 		}
 		return Field.SHUT_MISSED;

@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
 /**
- * Контроллер главного окна
+ * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
  */
 public class GameController implements ActionListener {
 
@@ -18,7 +18,7 @@ public class GameController implements ActionListener {
 	}
 
 	/**
-	 * обработчик выбора меню
+	 * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -26,22 +26,7 @@ public class GameController implements ActionListener {
 		if (cmd == "New game") { 	
 				model.newGame();
 		}
-		if (cmd == "5 x 5") {
-			model.setDimention(5, 5, 2);
-		}
-		
-		if (cmd == "10 x 10") {
-			model.setDimention(10, 10, 4);
-		}
-		
-		if (cmd == "15 x 15") {
-			model.setDimention(15, 15, 6);
-		}
-		
-		if (cmd == "20 x 20") {
-			model.setDimention(20, 20, 7);
-		}
-		
+
 		if (cmd == "About") {
 			System.out.println("About");
 //			Dialog dia = new Dialog(view, "test");

@@ -9,7 +9,7 @@ public class PlaceShipCheck extends PlaceShip {
 	@Override
 	public boolean setShip(int x, int y) {
 		if ( getField().isBound(x, y) ) { 
-			return ( getField().getCell(x, y).getState() == Cell.CELL_WATER );
+			return ( getField().getCell(x, y).getState() == Cell.State.WATER );
 		} else {
 			return false;
 		}
