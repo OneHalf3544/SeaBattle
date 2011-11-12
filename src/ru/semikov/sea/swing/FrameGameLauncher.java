@@ -1,6 +1,6 @@
 package ru.semikov.sea.swing;
 
-import javax.swing.UIManager;
+import javax.swing.*;
 
 public class FrameGameLauncher {
 	
@@ -13,9 +13,15 @@ public class FrameGameLauncher {
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
-		GameModel model = new GameModel(15, 15, 6);
-		GameView view = new GameView(model);
-		view.setVisible(true);		
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                GameModel model = new GameModel(15, 15, 6);
+                GameView view = new GameView(model);
+                view.setVisible(true);
+            }
+        });
 	}
 
 }

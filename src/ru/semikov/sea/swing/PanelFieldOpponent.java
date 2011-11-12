@@ -11,8 +11,8 @@ public class PanelFieldOpponent extends PanelField {
 		super(field);
 	}
 
-	protected Color getColorByStateElement(Cell.State state) {
-		return state.getOpponentColor();
+	protected Color getColorByStateElement(CellState cellState) {
+		return cellState.getOpponentColor();
 	}
 
 }

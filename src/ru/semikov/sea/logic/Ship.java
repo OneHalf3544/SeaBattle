@@ -1,6 +1,7 @@
 package ru.semikov.sea.logic;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Ship {
@@ -8,34 +9,38 @@ public class Ship {
     public enum State {
         WELL,
         INJURED,
-        KILLED;
+        KILLED
+        }
+
+    private int x;
+    private int y;
+    private int dx;
+    private int dy;
+    private final int size;
+    private int health;
+    private State state;
+    private final Field field;
+    private final List<Cell> listCells;
+    private final List<Cell> listBorders;
+
+    private final ShipPlacer shipPlacer;
+
+    public List<Cell> getListCells() {
+        return listCells;
     }
 
-	public int x;
-	public int y;
-	public int dx;
-	public int dy;
-	private int size;
-	private int health;
-	private State state;
-	private Field field;
-	private ArrayList<Cell> listCells;
-	private ArrayList<Cell> listBorders;
-	
-	public ArrayList<Cell> getListCells() {
-		return listCells;
-	}
+    public List<Cell> getListBorders() {
+        return listBorders;
+    }
 
-	public ArrayList<Cell> getListBorders() {
-		return listBorders;
-	}
-
-	public Ship(Field field, int size) {
+    public Ship(Field field, int size) {
 		this.size = size;
 		this.health = size;
 		this.field = field;
 		this.state = State.WELL;
-		
+
+        this.shipPlacer = new ShipPlacer(field);
+
 		do {
 			this.getPlace();
 		} while (! checkPlace() );
@@ -43,96 +48,54 @@ public class Ship {
 		this.listCells = new ArrayList<Cell>();
 		this.listBorders = new ArrayList<Cell>();
 		this.setShip();
-		
-		getField().setNumLiveShips(getField().getNumLiveShips() + 1);
+
+        this.field.incrementNumLiveShips();
 	}
 
 	private void getPlace() {
 		Random rand = new Random();
-		this.x = rand.nextInt(getField().getWidth());
-		this.y = rand.nextInt(getField().getHeight());
-		this.dx = 0;
-		this.dy = 0;
-		if (rand.nextInt(2) == 1) {
-			this.dx = 1;
-		} else {
-			this.dy = 1;
-		}
-	}
-	
-	/**
-	 * ������� ������ ������� � ��� ���������
-	 * 
-	 * @return
-	 */
-	private boolean byPass(PlaceShip tp) {
-		int i, m, n;
-		
-		for(i = 0; i < size; i++) {
-			// �������
-			m = y + i * dy;
-			n = x + i * dx;
-			if (! tp.setShip(m, n) ) {
-				return false;
-			}
-			
-			// �������� ������ � ����� �������
-			m = y + i * dy - dx;
-			n = x + i * dx - dy;
-			if (! tp.setBorder(m, n) ) {
-				return false;
-			}
-			m = y + i * dy + dx;
-			n = x + i * dx + dy;
-			if (! tp.setBorder(m, n) ) {
-				return false;
-			}
-		}
-		// �������� ����� � ������ �������
-		for(i = -1; i < 2; i++) {
-			m = y + i * dx - dy;
-			n = x + i * dy - dx;
-			if (! tp.setBorder(m, n) ) {
-				return false;
-			}
-			m = y + i * dx + (dy * size);
-			n = x + i * dy + (dx * size);
-			if (! tp.setBorder(m, n) ) {
-				return false;
-			}
-		}
-		return true;
-	}
+
+        if (rand.nextBoolean()) {
+            this.dx = 1;
+            this.dy = 0;
+        } else {
+            this.dx = 0;
+            this.dy = 1;
+        }
+        
+        this.x = rand.nextInt(field.getWidth() - dx * size);
+        this.y = rand.nextInt(field.getHeight() - dy * size);
+    }
 
 	private boolean checkPlace() {
-		return byPass(new PlaceShipCheck(this));
+        return shipPlacer.checkPlaceForShip(this, getX(), getY(), getDx(), getDy());
 	}
 
 	private void setShip() {
-		byPass(new PlaceShipSet(this));
+		shipPlacer.setShip(this, getX(), getY(), getDx(), getDy());
 	}
 
-	public int doShot() {
+	public ShootState doShot() {
         if (health == 0) {
-            return Field.SHUT_INJURED;
+            return ShootState.INJURED;
         }
 
         health--;
         if (health != 0) {
             state = State.INJURED;
-            return Field.SHUT_INJURED;
+            return ShootState.INJURED;
         }
 
-        getField().setNumLiveShips(getField().getNumLiveShips() - 1);
+        field.setNumLiveShips(field.getNumLiveShips() - 1);
         state = State.KILLED;
-        for(Cell e : listCells) {
-            e.setState(Cell.State.KILLED);
+        for(Cell cell : listCells) {
+            cell.setState(CellState.KILLED);
         }
-        for(Cell e : listBorders) {
-            e.setState(Cell.State.MISSED);
-            e.setMark(true);
+        for(Cell cell : listBorders) {
+            cell.setState(CellState.MISSED);
+            cell.setAlreadyUsed(true);
         }
-        return Field.SHUT_KILLED;
+        return ShootState.KILLED;
     }
 	
 	public int getSize() {
@@ -146,5 +109,21 @@ public class Ship {
 	public Field getField() {
 		return field;
 	}
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getDx() {
+        return dx;
+    }
+
+    public int getDy() {
+        return dy;
+    }
 
 }

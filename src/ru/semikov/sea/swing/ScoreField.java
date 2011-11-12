@@ -17,7 +17,7 @@ public class ScoreField extends JPanel implements ISubscriber {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
-		int numShip = model.playerFieldOpponent.getMaxShip();
+		int numShip = model.playerFieldOpponent.getMaxShipSize();
 
 		int[] m = new int[numShip];
 		for(int i = 0; i < 0; i++) {

@@ -4,119 +4,63 @@ import java.awt.*;
 
 public class Cell {
 
-    public enum State {
-        WATER(new Color(225, 225, 255), new Color(225, 225, 255)),
-        BORDER(new Color(215, 215, 255), new Color(225, 225, 255)),
-        WELL(Color.green, new Color(225, 225, 255)),
-        INJURED(Color.red, Color.red),
-        KILLED(Color.gray, Color.gray),
-        MISSED(Color.black, Color.black);
+    private final Point point;
 
-        private final Color playerColor;
-        private final Color opponentColor;
+	private CellState state;
 
-        private State(Color playerColor, Color opponentColor) {
-            this.playerColor = playerColor;
-            this.opponentColor = opponentColor;
-        }
-
-        public Color getPlayerColor() {
-            return playerColor;
-        }
-
-        public Color getOpponentColor() {
-            return opponentColor;
-        }
-    }
-
-	/**
-	 * @uml.property  name="x"
-	 */
-	public int x;
-	/**
-	 * @uml.property  name="y"
-	 */
-	public int y;
-	/**
-	 * @uml.property  name="state"
-	 */
-	private State state;
-	/**
-	 * @uml.property  name="ship"
-	 * @uml.associationEnd  inverse="listCells:ru.semikov.sea.logic.Ship"
-	 */
 	private Ship ship;
-	/**
-	 * @uml.property  name="mark"
-	 */
-	private boolean mark;
+
+	private boolean alreadyUsed;
 
 	public Cell(int x, int y) {
-		this.x = x;
-		this.y = y;
-		this.state = State.WATER;
-		this.mark = false;
+		this.point = new Point(x, y);
+
+		this.state = CellState.WATER;
+		this.alreadyUsed = false;
 	}
 	
-	/**
-	 * @param state
-	 * @uml.property  name="state"
-	 */
-	public void setState(State state) {
+	public void setState(CellState state) {
 		this.state = state;
 	}
 	
-	/**
-	 * @return
-	 * @uml.property  name="state"
-	 */
-	public State getState() {
+	public CellState getState() {
 		return state;
 	}
 
-	/**
-	 * @return
-	 * @uml.property  name="mark"
-	 */
-	public boolean isMark() {
-		return mark;
+	public boolean isAlreadyUsed() {
+		return alreadyUsed;
 	}
 	
-	/**
-	 * @param mark
-	 * @uml.property  name="mark"
-	 */
-	public void setMark(boolean mark) {
-		this.mark = mark;
+	public void setAlreadyUsed(boolean alreadyUsed) {
+		this.alreadyUsed = alreadyUsed;
 	}
 
-	/**
-	 * @return
-	 * @uml.property  name="ship"
-	 */
-	public Ship getShip() {
-		return ship;
-	}
-
-	/**
-	 * @param ship
-	 * @uml.property  name="ship"
-	 */
-	public void setShip(Ship ship) {
+    public void setShip(Ship ship) {
 		this.ship = ship;
 	}
 
-	public int doShot() {
-		setMark(true);
-		if (state == State.WELL) {
-			setState(State.INJURED);
-			return getShip().doShot();
-		} else {
-			if ( (state == State.BORDER) || (state == State.WATER)) {
-				setState(State.MISSED);
-			}
+	public ShootState doShot() {
+        alreadyUsed = true;
+		if (state == CellState.WELL) {
+            state = CellState.INJURED;
+			return ship.doShot();
 		}
-		return Field.SHUT_MISSED;
+
+        if ( state == CellState.BORDER || state == CellState.WATER) {
+            state = CellState.MISSED;
+        }
+        return ShootState.MISSED;
 	}
-	
+
+    public Point getPosition() {
+        return point;
+    }
+
+    public int getX() {
+        return point.x;
+    }
+
+    public int getY() {
+        return point.y;
+    }
 }

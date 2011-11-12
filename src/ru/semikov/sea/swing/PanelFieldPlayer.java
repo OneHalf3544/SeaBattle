@@ -11,8 +11,8 @@ public class PanelFieldPlayer extends PanelField {
 	}
 
 	@Override
-	protected Color getColorByStateElement(Cell.State state) {
-        return state.getPlayerColor();
+	protected Color getColorByStateElement(CellState cellState) {
+        return cellState.getPlayerColor();
 	}
 	
 }

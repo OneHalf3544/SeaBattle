@@ -1,74 +1,85 @@
 package ru.semikov.sea.swing;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import ru.semikov.sea.ai.ActionHolder;
+import ru.semikov.sea.logic.Field;
+import ru.semikov.sea.logic.ShootState;
 
-import ru.semikov.sea.ai.AI;
-import ru.semikov.sea.logic.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Main window representation
  */
 public class GameModel {
-	private ArrayList<ISubscriber> listeners = new ArrayList<ISubscriber>();
+
+    public enum CurrentPlayer {
+        OPPONENT,
+        USER
+    }
+
+	private List<ISubscriber> listeners = new ArrayList<ISubscriber>();
+
 	public Field playerFieldPlayer;
 	public Field playerFieldOpponent;
-	public AI ai;
-	public int currentPlayer;
+	public ActionHolder actionHolder;
+
+    public CurrentPlayer currentPlayer;
 	private boolean enableShot;
 
 	public GameModel(int dx, int dy, int numShip) {
 		playerFieldPlayer = new Field(dx, dy, numShip);
 		playerFieldOpponent = new Field(dx, dy, numShip);
-		ai = new AI(playerFieldPlayer);
+		actionHolder = new ActionHolder(playerFieldPlayer);
 		setDimension(dx, dy, numShip);
 	}
 
 	public void setDimension(int dx, int dy, int numShip) {
 		playerFieldOpponent.setWidth(dx);
 		playerFieldOpponent.setHeight(dy);
-		playerFieldOpponent.setMaxShip(numShip);
+		playerFieldOpponent.setMaxShipSize(numShip);
 		
 		playerFieldPlayer.setWidth(dx);
 		playerFieldPlayer.setHeight(dy);
-		playerFieldPlayer.setMaxShip(numShip);
+		playerFieldPlayer.setMaxShipSize(numShip);
 		enableShot = true;
 		newGame();
 		updateSubscribers();
 	}
 	
 	/**
-	 * Расставление кораблей заново 
+	 * Set ships again
 	 */
 	public void newGame() {
 		playerFieldPlayer.setShip();
 		playerFieldOpponent.setShip();
 		enableShot = true;
-		currentPlayer = 0;
+		currentPlayer = CurrentPlayer.USER;
 		updateSubscribers();
 	}
 
 	/**
-	 * Выстрел по текущему игроку
-	 */
+	 * Shot on the current player
+     * @param x coordinate for shot
+     * @param y coordinate for shot
+     */
 	public void doShotByOpponent(int x, int y) {
 		if (!enableShot) {
 			return;
 		}
-		// если ходит локальный игрок
-		if (currentPlayer == 0) {
-			if (playerFieldOpponent.getCell(x, y).isMark()) {
+		if (currentPlayer == CurrentPlayer.USER) {
+			if (playerFieldOpponent.getCell(x, y).isAlreadyUsed()) {
 				return;
 			}
-			if (playerFieldOpponent.doShot(x, y) == Field.SHUT_MISSED) {
+			if (playerFieldOpponent.doShot(x, y) == ShootState.MISSED) {
 				// если промахнулись
-				currentPlayer = 1;
+				currentPlayer = CurrentPlayer.OPPONENT;
 			}
 		}
-		// если ходит противник
-		if (currentPlayer ==1) {
-			while (ai.doShot() != Field.SHUT_MISSED);
-			currentPlayer = 0;
+
+		if (currentPlayer == CurrentPlayer.OPPONENT) {
+			while (actionHolder.doShot() != ShootState.MISSED) {
+            }
+			currentPlayer = CurrentPlayer.USER;
 		}
 		updateSubscribers();
 
@@ -81,17 +92,11 @@ public class GameModel {
 		listeners.add(o);
 		o.update();
 	}
-	
-	public void unRegister(ISubscriber o) {
-		listeners.remove(o);
-	}
-	
-	public void updateSubscribers() {
-		Iterator<ISubscriber> i = listeners.iterator();
-		while(i.hasNext()) {
-			ISubscriber o = (ISubscriber)i.next();
-			o.update();
-		}
+
+    public void updateSubscribers() {
+        for (ISubscriber o : listeners) {
+            o.update();
+        }
 	}
 
 }

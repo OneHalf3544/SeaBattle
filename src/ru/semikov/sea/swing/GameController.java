@@ -50,9 +50,8 @@ public class GameController implements ActionListener {
 		PanelField field =  view.panelPlayerOpponent;
 		int x = arg0.getX() / (field.getWidth() / field.getField().getWidth());
 		int y = arg0.getY() / (field.getHeight() / field.getField().getHeight());
-		if ( field.getField().isBound(x, y) ) {
-			model.doShotByOpponent(x, y);
-		}
+
+		model.doShotByOpponent(x, y);
 	}
 
 }

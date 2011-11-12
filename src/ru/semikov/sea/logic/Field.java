@@ -1,72 +1,81 @@
 package ru.semikov.sea.logic;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Field {
-	public final static int SHUT_MISSED = 1; 
-	public final static int SHUT_INJURED = 2; 
-	public final static int SHUT_KILLED = 3; 
 
-	private Cell[][] cells;
-	private ArrayList<Ship> ships;
+    private Cell[][] cells;
+	private List<Ship> ships;
+
 	private int width;
 	private int height;
-	private int maxShip;
+	private int maxShipSize;
 	private int numLiveShips;
 
 	public Field(int x, int y, int ship) {
 		setDimension(x, y, ship);
-		setShip();
+        setShip();
+    }
+
+    public final void setShip() {
+        numLiveShips = 0;
+
+        fillWithWater();
+
+        // Fill the field by the ships
+        ships = new ArrayList<Ship>();
+        for(int i = maxShipSize; i > 0; i--) {
+            int shipNum = maxShipSize - i + 1;
+            for(int j = 0; j < shipNum; j++) {
+                ships.add(new Ship(this, i));
+            }
+        }
+
+        replaceBorderElementsOnWater();
+    }
+
+    /**
+     * Remove the ship surrounded borders
+     */
+    private void replaceBorderElementsOnWater() {
+        for(int j = 0; j < height; j++) {
+            for(int i = 0; i < width; i++) {
+                Cell cell = cells[i][j];
+                if (cell.getState() == CellState.BORDER) {
+                    cell.setState(CellState.WATER);
+                }
+            }
+        }
+    }
+
+    /**
+     * Fill the fields by water elements
+     */
+    private void fillWithWater() {
+        cells = new Cell[width][height];
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++) {
+                cells[i][j] = new Cell(i, j);
+            }
+        }
+    }
+
+    private void setDimension(int x, int y, int ship) {
+        width = x;
+        height = y;
+        maxShipSize = ship;
 	}
 
-	public void setDimension(int x, int y, int ship) {
-		setWidth(x);
-		setHeight(y);
-		setMaxShip(ship);
-	}
-
-	public void setShip() {
-		setNumLiveShips(0);
-		// Fill the fields by water elements
-		cells = new Cell[getWidth()][getHeight()]; 
-		for(int j = 0; j < getHeight(); j++) {
-			for(int i = 0; i < getWidth(); i++) {
-				cells[i][j] = new Cell(i, j);
-			}
-		}
-		// Fill the field by the ships
-		ships = new ArrayList<Ship>(); 
-		for(int i = getMaxShip(); i > 0; i--) {
-			for(int j = (getMaxShip() - i +1 ); j > 0; j--) {
-				Ship ship=new Ship(this,i);
-				ships.add(ship);
-			}
-		}
-		// Remove the ship surrounded border
-		for(int j = 0; j < getHeight(); j++) {
-			for(int i = 0; i < getWidth(); i++) {
-				Cell cell = cells[i][j];
-				if (cell.getState() == Cell.State.BORDER) {
-					cell.setState(Cell.State.WATER);
-				}
-			}
-		}
-	}
-	
-	public int doShot(int x, int y) {
-		int shot = getCell(x, y).doShot();
-		return shot;
-	}
-	
- 	public boolean isBound(int x, int y) {
-		return !( (x < 0) || (x > (getWidth() - 1)) || (y < 0) || (y > (getHeight() - 1) ) );
+    public ShootState doShot(int x, int y) {
+        return getCell(x, y).doShot();
 	}
 	
 	public Cell getCell(int x, int y) {
 		return cells[x][y];
 	}
 	
-	public ArrayList<Ship> getShips() {
+	public List<Ship> getShips() {
 		return ships;
 	}
 
@@ -86,12 +95,12 @@ public class Field {
 		this.height = height;
 	}
 
-	public int getMaxShip() {
-		return maxShip;
+	public int getMaxShipSize() {
+		return maxShipSize;
 	}
 
-	public void setMaxShip(int maxShip) {
-		this.maxShip = maxShip;
+	public void setMaxShipSize(int maxShipSize) {
+		this.maxShipSize = maxShipSize;
 	}
 
 	public int getNumLiveShips() {
@@ -102,4 +111,11 @@ public class Field {
 		this.numLiveShips = numLiveShips;
 	}
 
+	public void incrementNumLiveShips() {
+		this.numLiveShips++;
+	}
+
+    public boolean isBound(int x, int y) {
+        return (x >= 0 && x < getWidth()) && (y >= 0 && y < getHeight());
+    }
 }
