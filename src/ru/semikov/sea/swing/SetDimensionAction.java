@@ -1,6 +1,7 @@
 package ru.semikov.sea.swing;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
 /**
@@ -11,14 +12,14 @@ import java.awt.event.ActionEvent;
  */
 public class SetDimensionAction extends AbstractAction {
 
-    private final int width;
-    private final int height;
+    private final Dimension dimension;
+
     private final int shipNum;
     private final GameModel model;
 
     public SetDimensionAction(int width, int height, int shipNum, GameModel model) {
-        this.width = width;
-        this.height = height;
+        this.dimension = new Dimension(width, height);
+
         this.shipNum = shipNum;
         this.model = model;
 
@@ -27,6 +28,6 @@ public class SetDimensionAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        model.setDimension(width, height, shipNum);
+        model.setFieldParams(dimension, shipNum);
     }
 }

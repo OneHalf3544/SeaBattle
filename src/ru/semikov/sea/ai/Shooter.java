@@ -1,6 +1,6 @@
 package ru.semikov.sea.ai;
 
-import ru.semikov.sea.logic.ShootState;
+import ru.semikov.sea.logic.ShotState;
 
 import java.awt.*;
 
@@ -12,7 +12,7 @@ import java.awt.*;
  */
 public interface Shooter {
 
-    public ShootState doShot(ActionHolder actionHolder);
+    public ShotState doShot(ActionHolder actionHolder);
 
     public void setLocation(Point point);
 }

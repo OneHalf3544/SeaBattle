@@ -1,5 +1,7 @@
 package ru.semikov.sea.logic;
 
+import java.awt.*;
+
 public class ShipPlacer {
 
     private final Field field;
@@ -8,16 +10,26 @@ public class ShipPlacer {
         this.field = field;
     }
 
-    public boolean checkPlaceForShip(Ship ship, int x, int y, int dx, int dy) {
+    public boolean checkPlaceForShip(Ship ship, Point location, Direction direction) {
+
         for(int i = 0; i < ship.getSize(); i++) {
-            if (field.getCell(x + i * dx, y + i * dy).getState() != CellState.WATER) {
+            int currX = location.x + i * direction.getDx();
+            int currY = location.y + i * direction.getDy();
+
+            if (field.getCell(currX, currY).getState() != CellState.WATER) {
                 return false;
             }
 		}
         return true;
     }
     
-    public void setShip(Ship ship, int x, int y, int dx, int dy) {
+    public void setShip(Ship ship, Point location, Direction direction) {
+        int x = location.x;
+        int y = location.y;
+
+        int dx = direction.getDx();
+        int dy = direction.getDy();
+
         for(int i = 0; i < ship.getSize(); i++) {
 			int n = x + i * dx;
             int m = y + i * dy;

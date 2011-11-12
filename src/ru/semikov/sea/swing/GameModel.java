@@ -2,48 +2,44 @@ package ru.semikov.sea.swing;
 
 import ru.semikov.sea.ai.ActionHolder;
 import ru.semikov.sea.logic.Field;
-import ru.semikov.sea.logic.ShootState;
+import ru.semikov.sea.logic.ShotState;
 
+import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Main window representation
  */
 public class GameModel {
 
-    public enum CurrentPlayer {
-        OPPONENT,
-        USER
-    }
+	private final Collection<FieldChangeListener> listeners = new ArrayList<FieldChangeListener>();
 
-	private List<ISubscriber> listeners = new ArrayList<ISubscriber>();
-
-	public Field playerFieldPlayer;
-	public Field playerFieldOpponent;
-	public ActionHolder actionHolder;
-
-    public CurrentPlayer currentPlayer;
+	private final Field playerFieldPlayer;
+	private final Field playerFieldOpponent;
+	private final ActionHolder actionHolder;
+    
 	private boolean enableShot;
 
-	public GameModel(int dx, int dy, int numShip) {
-		playerFieldPlayer = new Field(dx, dy, numShip);
-		playerFieldOpponent = new Field(dx, dy, numShip);
+	public GameModel(Dimension dimension, int maxShipSize) {
+		playerFieldPlayer = new Field(dimension, maxShipSize);
+		playerFieldOpponent = new Field(dimension, maxShipSize);
 		actionHolder = new ActionHolder(playerFieldPlayer);
-		setDimension(dx, dy, numShip);
+
+        setFieldParams(dimension, maxShipSize);
 	}
 
-	public void setDimension(int dx, int dy, int numShip) {
-		playerFieldOpponent.setWidth(dx);
-		playerFieldOpponent.setHeight(dy);
-		playerFieldOpponent.setMaxShipSize(numShip);
+	public final void setFieldParams(Dimension dimension, int maxShipSize) {
+		playerFieldOpponent.setDimension(dimension);
+		playerFieldOpponent.setMaxShipSize(maxShipSize);
 		
-		playerFieldPlayer.setWidth(dx);
-		playerFieldPlayer.setHeight(dy);
-		playerFieldPlayer.setMaxShipSize(numShip);
+		playerFieldPlayer.setDimension(dimension);
+		playerFieldPlayer.setMaxShipSize(maxShipSize);
+
 		enableShot = true;
 		newGame();
-		updateSubscribers();
+
+        fireFieldChange();
 	}
 	
 	/**
@@ -53,50 +49,52 @@ public class GameModel {
 		playerFieldPlayer.setShip();
 		playerFieldOpponent.setShip();
 		enableShot = true;
-		currentPlayer = CurrentPlayer.USER;
-		updateSubscribers();
+
+		fireFieldChange();
 	}
 
 	/**
-	 * Shot on the current player
+	 * Shot on specified cell on opponent field. Further make some shots by opponent to the user field
      * @param x coordinate for shot
      * @param y coordinate for shot
      */
-	public void doShotByOpponent(int x, int y) {
+	public void doShotByUser(int x, int y) {
 		if (!enableShot) {
 			return;
 		}
-		if (currentPlayer == CurrentPlayer.USER) {
-			if (playerFieldOpponent.getCell(x, y).isAlreadyUsed()) {
-				return;
-			}
-			if (playerFieldOpponent.doShot(x, y) == ShootState.MISSED) {
-				// если промахнулись
-				currentPlayer = CurrentPlayer.OPPONENT;
-			}
-		}
 
-		if (currentPlayer == CurrentPlayer.OPPONENT) {
-			while (actionHolder.doShot() != ShootState.MISSED) {
+        if (playerFieldOpponent.getCell(x, y).isAlreadyUsed()) {
+            return;
+        }
+
+        if (playerFieldOpponent.doShot(x, y) == ShotState.MISSED) {
+            while (actionHolder.doShot() != ShotState.MISSED) {
             }
-			currentPlayer = CurrentPlayer.USER;
-		}
-		updateSubscribers();
+        }
 
-		if ( (playerFieldPlayer.getNumLiveShips() == 0) || (playerFieldOpponent.getNumLiveShips() == 0) ) {
+		fireFieldChange();
+
+		if ( playerFieldPlayer.getNumLiveShips() == 0 || playerFieldOpponent.getNumLiveShips() == 0) {
 			enableShot = false;
 		}
 	}
-	
-	public void register(ISubscriber o) {
+
+	public void addListener(FieldChangeListener o) {
 		listeners.add(o);
-		o.update();
+		o.fieldChanged();
 	}
 
-    public void updateSubscribers() {
-        for (ISubscriber o : listeners) {
-            o.update();
+    private void fireFieldChange() {
+        for (FieldChangeListener o : listeners) {
+            o.fieldChanged();
         }
 	}
 
+    public Field getPlayerFieldPlayer() {
+        return playerFieldPlayer;
+    }
+
+    public Field getPlayerFieldOpponent() {
+        return playerFieldOpponent;
+    }
 }

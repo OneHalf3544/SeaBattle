@@ -6,7 +6,7 @@ package ru.semikov.sea.logic;
 *
 * @author OneHalf
 */
-public enum ShootState {
+public enum ShotState {
     MISSED,
     INJURED,
     KILLED

@@ -12,13 +12,13 @@ public class RandomShotMode implements Shooter {
     
     private static final Random random = new Random();
 
-	public ShootState doShot(ActionHolder ai) {
+	public ShotState doShot(ActionHolder ai) {
         List<Cell> list = searchUnmarkedCells(ai.getField());
 
 		Cell randomCell = list.get(random.nextInt(list.size()));
-		ShootState shot = randomCell.doShot();
+		ShotState shot = randomCell.doShot();
 
-        if (shot == ShootState.INJURED) {
+        if (shot == ShotState.INJURED) {
 			ai.setPlaceAction();
 			ai.setLocation(randomCell.getPosition());
 		}

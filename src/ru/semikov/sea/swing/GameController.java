@@ -9,10 +9,10 @@ import java.awt.event.MouseEvent;
  */
 public class GameController implements ActionListener {
 
-	public GameModel model;
-	public GameView view;
+	private final GameModel model;
+	private final GameFrame view;
 
-	public GameController(GameView view, GameModel model) {
+	public GameController(GameFrame view, GameModel model) {
 		this.view = view;
 		this.model = model;
 	}
@@ -28,30 +28,11 @@ public class GameController implements ActionListener {
 		}
 
 		if (cmd == "About") {
-			System.out.println("About");
-//			Dialog dia = new Dialog(view, "test");
-//			dia.setVisible(true);
-//			dia.addKeyListener(new KeyAdapter() {
-//				@Override
-//				public void keyPressed(KeyEvent arg0) {
-//					super.keyPressed(arg0);
-//					if (arg0.getKeyCode() == 27) {
-//						dia.setVisible(false);
-//					}
-//				}
-//			})
 		}
+
 		if (cmd == "Exit") {	
 			System.exit(0);
 		}
-	}
-
-	public void mousePressed(MouseEvent arg0) {
-		PanelField field =  view.panelPlayerOpponent;
-		int x = arg0.getX() / (field.getWidth() / field.getField().getWidth());
-		int y = arg0.getY() / (field.getHeight() / field.getField().getHeight());
-
-		model.doShotByOpponent(x, y);
 	}
 
 }

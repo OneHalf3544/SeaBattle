@@ -1,5 +1,6 @@
 package ru.semikov.sea.logic;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,13 +9,14 @@ public class Field {
     private Cell[][] cells;
 	private List<Ship> ships;
 
-	private int width;
-	private int height;
 	private int maxShipSize;
 	private int numLiveShips;
+    private Dimension dimension;
 
-	public Field(int x, int y, int ship) {
-		setDimension(x, y, ship);
+    public Field(Dimension dimension, int maxShipSize) {
+        this.dimension = dimension;
+        this.maxShipSize = maxShipSize;
+
         setShip();
     }
 
@@ -39,8 +41,8 @@ public class Field {
      * Remove the ship surrounded borders
      */
     private void replaceBorderElementsOnWater() {
-        for(int j = 0; j < height; j++) {
-            for(int i = 0; i < width; i++) {
+        for(int j = 0; j < getHeight(); j++) {
+            for(int i = 0; i < getWidth(); i++) {
                 Cell cell = cells[i][j];
                 if (cell.getState() == CellState.BORDER) {
                     cell.setState(CellState.WATER);
@@ -53,21 +55,19 @@ public class Field {
      * Fill the fields by water elements
      */
     private void fillWithWater() {
-        cells = new Cell[width][height];
-        for (int j = 0; j < height; j++) {
-            for (int i = 0; i < width; i++) {
+        cells = new Cell[dimension.width][dimension.height];
+        for (int j = 0; j < getHeight(); j++) {
+            for (int i = 0; i < getWidth(); i++) {
                 cells[i][j] = new Cell(i, j);
             }
         }
     }
 
-    private void setDimension(int x, int y, int ship) {
-        width = x;
-        height = y;
-        maxShipSize = ship;
+    public final void setDimension(Dimension dimension) {
+        this.dimension = dimension;
 	}
 
-    public ShootState doShot(int x, int y) {
+    public ShotState doShot(int x, int y) {
         return getCell(x, y).doShot();
 	}
 	
@@ -80,19 +80,11 @@ public class Field {
 	}
 
 	public int getWidth() {
-		return width;
-	}
-
-	public void setWidth(int width) {
-		this.width = width;
+		return dimension.width;
 	}
 
 	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight(int height) {
-		this.height = height;
+		return dimension.height;
 	}
 
 	public int getMaxShipSize() {
@@ -116,6 +108,6 @@ public class Field {
 	}
 
     public boolean isBound(int x, int y) {
-        return (x >= 0 && x < getWidth()) && (y >= 0 && y < getHeight());
+        return x >= 0 && x < getWidth() && y >= 0 && y < getHeight();
     }
 }

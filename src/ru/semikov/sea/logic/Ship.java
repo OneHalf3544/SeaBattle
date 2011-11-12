@@ -1,21 +1,23 @@
 package ru.semikov.sea.logic;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class Ship {
 
+    private static final Random rand = new Random();
+
     public enum State {
         WELL,
         INJURED,
         KILLED
-        }
+    }
 
-    private int x;
-    private int y;
-    private int dx;
-    private int dy;
+    private Point location;
+    private Direction direction;
+
     private final int size;
     private int health;
     private State state;
@@ -53,37 +55,30 @@ public class Ship {
 	}
 
 	private void getPlace() {
-		Random rand = new Random();
+        this.direction = rand.nextBoolean() ? Direction.RIGHT : Direction.DOWN;
 
-        if (rand.nextBoolean()) {
-            this.dx = 1;
-            this.dy = 0;
-        } else {
-            this.dx = 0;
-            this.dy = 1;
-        }
-        
-        this.x = rand.nextInt(field.getWidth() - dx * size);
-        this.y = rand.nextInt(field.getHeight() - dy * size);
+        this.location = new Point(
+                rand.nextInt(field.getWidth() - direction.getDx() * size),
+                rand.nextInt(field.getHeight() - direction.getDy() * size));
     }
 
 	private boolean checkPlace() {
-        return shipPlacer.checkPlaceForShip(this, getX(), getY(), getDx(), getDy());
+        return shipPlacer.checkPlaceForShip(this, location, direction);
 	}
 
 	private void setShip() {
-		shipPlacer.setShip(this, getX(), getY(), getDx(), getDy());
+		shipPlacer.setShip(this, location, direction);
 	}
 
-	public ShootState doShot() {
+	public ShotState doShot() {
         if (health == 0) {
-            return ShootState.INJURED;
+            return ShotState.INJURED;
         }
 
         health--;
         if (health != 0) {
             state = State.INJURED;
-            return ShootState.INJURED;
+            return ShotState.INJURED;
         }
 
         field.setNumLiveShips(field.getNumLiveShips() - 1);
@@ -95,7 +90,7 @@ public class Ship {
             cell.setState(CellState.MISSED);
             cell.setAlreadyUsed(true);
         }
-        return ShootState.KILLED;
+        return ShotState.KILLED;
     }
 	
 	public int getSize() {
@@ -105,25 +100,4 @@ public class Ship {
 	public State getState() {
 		return state;
 	}
-
-	public Field getField() {
-		return field;
-	}
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public int getDx() {
-        return dx;
-    }
-
-    public int getDy() {
-        return dy;
-    }
-
 }

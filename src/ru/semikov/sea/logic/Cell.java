@@ -6,7 +6,7 @@ public class Cell {
 
     private final Point point;
 
-	private CellState state;
+	private CellState state = CellState.WATER;
 
 	private Ship ship;
 
@@ -14,9 +14,7 @@ public class Cell {
 
 	public Cell(int x, int y) {
 		this.point = new Point(x, y);
-
-		this.state = CellState.WATER;
-		this.alreadyUsed = false;
+        this.alreadyUsed = false;
 	}
 	
 	public void setState(CellState state) {
@@ -39,7 +37,7 @@ public class Cell {
 		this.ship = ship;
 	}
 
-	public ShootState doShot() {
+	public ShotState doShot() {
         alreadyUsed = true;
 		if (state == CellState.WELL) {
             state = CellState.INJURED;
@@ -49,7 +47,7 @@ public class Cell {
         if ( state == CellState.BORDER || state == CellState.WATER) {
             state = CellState.MISSED;
         }
-        return ShootState.MISSED;
+        return ShotState.MISSED;
 	}
 
     public Point getPosition() {

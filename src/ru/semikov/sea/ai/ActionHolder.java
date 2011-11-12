@@ -2,7 +2,7 @@ package ru.semikov.sea.ai;
 
 import ru.semikov.sea.logic.Direction;
 import ru.semikov.sea.logic.Field;
-import ru.semikov.sea.logic.ShootState;
+import ru.semikov.sea.logic.ShotState;
 
 import java.awt.*;
 
@@ -22,7 +22,7 @@ public class ActionHolder {
 		this.currentAction = new RandomShotMode();
 	}
 
-	public ShootState doShot() {
+	public ShotState doShot() {
 		return currentAction.doShot(this);
 	}
 
@@ -47,7 +47,6 @@ public class ActionHolder {
     }
 
     public void setDirection(Direction direction) {
-        shootTheSiblingCellsMode.setDirection(direction);
         finishShipMode.setDirection(direction);
     }
 }
